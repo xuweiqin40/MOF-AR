@@ -3,80 +3,349 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MOF AR V4</title>
+<title>MOF 晶体结构 3D / AR 教学平台</title>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js"></script>
 <style>
-body{font-family:Arial,"Microsoft YaHei",sans-serif;margin:0;background:#f5f5f5;color:#111}
-main{max-width:1200px;margin:0 auto;padding:32px}
-h1{font-size:34px}
-#status{display:block;margin:18px 0;padding:14px 16px;background:#fff3cd;border:1px solid #ffe69c;border-radius:10px;font-size:18px}
-model-viewer{display:block;width:100%;height:68vh;min-height:520px;background:white;border:1px solid #ccc;border-radius:16px}
-button[slot="ar-button"]{padding:12px 18px;margin:16px;font-size:18px}
-.note{font-size:18px;line-height:1.7}
+:root{
+  --blue:#2c5fad;
+  --light:#eef5ff;
+  --line:#d9e4f5;
+  --bg:#f6f8fb;
+  --text:#1e1e1e;
+  --sub:#666;
+  --green:#2e7d32;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,"Microsoft YaHei",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+header{
+  background:var(--blue);
+  color:white;
+  padding:20px 24px;
+}
+header h1{
+  margin:0;
+  font-size:28px;
+}
+header p{
+  margin:8px 0 0;
+  font-size:14px;
+  opacity:.95;
+}
+main{
+  max-width:1280px;
+  margin:0 auto;
+  padding:22px;
+}
+.layout{
+  display:grid;
+  grid-template-columns: 340px 1fr;
+  gap:20px;
+}
+.panel{
+  background:white;
+  border-radius:16px;
+  border:1px solid var(--line);
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+}
+.sidebar{
+  padding:18px;
+}
+.sidebar h2{
+  margin:0 0 12px;
+  font-size:20px;
+  color:var(--blue);
+}
+.label{
+  font-size:14px;
+  color:var(--sub);
+  margin:12px 0 6px;
+}
+select, input, textarea{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #cfd8e3;
+  border-radius:10px;
+  font-size:15px;
+  background:white;
+}
+button{
+  border:none;
+  border-radius:10px;
+  padding:11px 16px;
+  font-size:15px;
+  cursor:pointer;
+}
+.btn-primary{
+  background:var(--blue);
+  color:white;
+}
+.btn-secondary{
+  background:#edf2fb;
+  color:var(--blue);
+}
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.small{
+  font-size:13px;
+  color:var(--sub);
+  line-height:1.6;
+}
+.badge{
+  display:inline-block;
+  background:var(--light);
+  color:var(--blue);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px 10px;
+  font-size:12px;
+  margin-bottom:8px;
+}
+#status{
+  margin-top:14px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:#fff8dd;
+  border:1px solid #ffe08a;
+  font-size:14px;
+}
+.viewer-panel{
+  padding:16px;
+}
+model-viewer{
+  width:100%;
+  height:72vh;
+  min-height:560px;
+  background:white;
+  border:1px solid #d8d8d8;
+  border-radius:16px;
+}
+button[slot="ar-button"]{
+  background:white;
+  color:var(--blue);
+  border:1px solid var(--blue);
+  font-weight:bold;
+  margin:16px;
+}
+.info-card{
+  margin-top:14px;
+  background:#fbfcfe;
+  border:1px solid #e5edf8;
+  border-radius:12px;
+  padding:14px;
+}
+.info-card h3{
+  margin:0 0 10px;
+  color:var(--blue);
+}
+.info-card p{
+  margin:6px 0;
+  line-height:1.65;
+}
+.code{
+  background:#f6f6f6;
+  border:1px solid #e1e1e1;
+  border-radius:8px;
+  padding:8px 10px;
+  font-family:Consolas,monospace;
+  font-size:13px;
+  overflow:auto;
+}
+footer{
+  max-width:1280px;
+  margin:0 auto;
+  padding:0 22px 24px;
+  color:#666;
+  font-size:13px;
+}
+@media (max-width: 980px){
+  .layout{grid-template-columns: 1fr;}
+  model-viewer{height:58vh; min-height:420px;}
+}
 </style>
 </head>
 <body>
+<header>
+  <h1>MOF 晶体结构 3D / AR 教学平台</h1>
+  <p>支持多个 MOF 模型切换显示；适用于课堂扫码、3D 观察和手机 AR 教学。</p>
+</header>
+
 <main>
-<h1>MOF 晶体结构 AR 教学样板 V4</h1>
-<div id="status">V4 页面已打开。正在加载 3D 组件……</div>
+  <div class="layout">
+    <section class="panel sidebar">
+      <div class="badge">多 MOF 选择版</div>
+      <h2>模型选择</h2>
 
-<model-viewer id="mv"
- src="MOF_AR_teaching_sample.glb"
- alt="MOF crystal structure"
- camera-controls
- auto-rotate
- ar
- ar-modes="webxr scene-viewer quick-look"
- shadow-intensity="1"
- exposure="1"
- loading="eager">
- <button slot="ar-button">在 AR 中查看</button>
-</model-viewer>
+      <div class="label">请选择 MOF</div>
+      <select id="modelSelect"></select>
 
-<p class="note">颜色：Zn 蓝紫色，O 红色，N 蓝色，C 深灰色。此版本已去除 H，并截取晶胞中心区域以提高移动端流畅度。</p>
+      <div class="row" style="margin-top:12px;">
+        <button class="btn-primary" onclick="loadSelectedModel()">加载模型</button>
+        <button class="btn-secondary" onclick="copyCurrentLink()">复制当前页面链接</button>
+      </div>
+
+      <div id="status">页面已加载。请选择一个 MOF，然后点击“加载模型”。</div>
+
+      <div class="info-card">
+        <h3 id="mofName">当前模型：未选择</h3>
+        <p><strong>文件名：</strong><span id="mofFile">—</span></p>
+        <p><strong>结构说明：</strong><span id="mofDesc">—</span></p>
+        <p><strong>教学提示：</strong><span id="mofTip">—</span></p>
+      </div>
+
+      <div class="info-card">
+        <h3>如何添加新的 MOF？</h3>
+        <p>1. 把新的 <strong>.glb</strong> 文件上传到当前 GitHub 仓库。</p>
+        <p>2. 打开本页面的 <strong>index.html</strong>。</p>
+        <p>3. 在 <strong>MODELS</strong> 数组中新增一条记录：</p>
+        <div class="code">
+{name: "UiO-66", file: "UiO66.glb", desc: "Zr-MOF", tip: "可观察 Zr 节点与孔结构"}
+        </div>
+        <p>4. 提交更改后，网页会自动更新。</p>
+      </div>
+
+      <div class="info-card">
+        <h3>课堂使用建议</h3>
+        <p>• 学生扫码进入页面后，可用手指旋转与缩放。</p>
+        <p>• 支持的手机可点击“在 AR 中查看”。</p>
+        <p>• 可围绕“金属节点—有机配体—孔道结构—潜在应用”进行讲解。</p>
+      </div>
+    </section>
+
+    <section class="panel viewer-panel">
+      <model-viewer id="viewer"
+        src=""
+        alt="MOF crystal structure"
+        camera-controls
+        auto-rotate
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        shadow-intensity="1"
+        exposure="1"
+        loading="eager"
+        interaction-prompt="auto">
+        <button slot="ar-button">在 AR 中查看</button>
+      </model-viewer>
+    </section>
+  </div>
 </main>
 
-<script type="module">
-const s = document.getElementById('status');
+<footer>
+  使用说明：请把每个 MOF 的 GLB 文件上传到同一 GitHub 仓库；再修改下方脚本里的 <strong>MODELS</strong> 数组即可实现多模型切换。
+</footer>
 
-async function loadModelViewer(){
-  try{
-    await import('https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js?mofv4=1');
-    s.textContent='✅ 3D 组件已通过 jsDelivr 加载，正在读取 MOF 模型……';
-  }catch(e1){
-    s.textContent='jsDelivr 加载失败，正在尝试备用服务器……';
-    try{
-      await import('https://unpkg.com/@google/model-viewer@4.0.0/dist/model-viewer.min.js?module');
-      s.textContent='✅ 3D 组件已通过备用服务器加载，正在读取 MOF 模型……';
-    }catch(e2){
-      s.textContent='❌ 两个 3D 组件服务器都无法访问。请把这一行截图发给 ChatGPT。';
-      s.style.background='#f8d7da';
-      s.style.borderColor='#f1aeb5';
-      return;
-    }
+<script>
+// ====== 在这里维护你的 MOF 模型列表 ======
+const MODELS = [
+  {
+    name: "示例 MOF（当前样板）",
+    file: "MOF_AR_teaching_sample.glb",
+    desc: "用于演示的 MOF 教学样板模型；适合课堂中展示框架与孔道空间感。",
+    tip: "建议先让学生练习旋转、缩放，再尝试点击“在 AR 中查看”。"
+  },
+  {
+    name: "MOF-5（待上传示例）",
+    file: "MOF5.glb",
+    desc: "Zn 基经典 MOF，可用于讲解节点、配体和立体孔道。",
+    tip: "上传 MOF5.glb 后即可正常显示；如果当前未上传，会提示加载失败。"
+  },
+  {
+    name: "UiO-66（待上传示例）",
+    file: "UiO66.glb",
+    desc: "Zr 基 MOF，适合讨论高稳定性框架与无机节点。",
+    tip: "上传 UiO66.glb 后即可在同一网页中切换查看。"
   }
+];
+// ======================================
 
-  await customElements.whenDefined('model-viewer');
-  const mv=document.getElementById('mv');
+const viewer = document.getElementById("viewer");
+const modelSelect = document.getElementById("modelSelect");
+const statusBox = document.getElementById("status");
+const nameBox = document.getElementById("mofName");
+const fileBox = document.getElementById("mofFile");
+const descBox = document.getElementById("mofDesc");
+const tipBox = document.getElementById("mofTip");
 
-  if (mv.loaded){
-    s.textContent='✅ MOF 模型已成功加载。可用鼠标拖动旋转、滚轮缩放。';
-    s.style.background='#d1e7dd';
-    s.style.borderColor='#a3cfbb';
-  }
-
-  mv.addEventListener('load',()=>{
-    s.textContent='✅ MOF 模型已成功加载。可用鼠标拖动旋转、滚轮缩放。';
-    s.style.background='#d1e7dd';
-    s.style.borderColor='#a3cfbb';
+function initSelect(){
+  MODELS.forEach((m, i) => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = m.name;
+    modelSelect.appendChild(opt);
   });
+  if (MODELS.length > 0){
+    modelSelect.value = 0;
+    loadSelectedModel();
+  }
+}
 
-  mv.addEventListener('error',()=>{
-    s.textContent='❌ 3D 组件已加载，但 GLB 模型读取失败。请把这一行截图发给 ChatGPT。';
-    s.style.background='#f8d7da';
-    s.style.borderColor='#f1aeb5';
+function setInfo(m){
+  nameBox.textContent = "当前模型：" + m.name;
+  fileBox.textContent = m.file;
+  descBox.textContent = m.desc || "—";
+  tipBox.textContent = m.tip || "—";
+}
+
+function loadSelectedModel(){
+  const idx = Number(modelSelect.value);
+  const m = MODELS[idx];
+  if(!m){ return; }
+
+  setInfo(m);
+  statusBox.textContent = "正在加载模型：" + m.name;
+  statusBox.style.background = "#fff8dd";
+  statusBox.style.border = "1px solid #ffe08a";
+
+  viewer.src = m.file;
+  const url = new URL(window.location.href);
+  url.searchParams.set("model", idx);
+  history.replaceState(null, "", url.toString());
+}
+
+function copyCurrentLink(){
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    statusBox.textContent = "当前页面链接已复制，可发送给学生或生成二维码。";
+    statusBox.style.background = "#e8f5e9";
+    statusBox.style.border = "1px solid #b7ddb9";
+  }).catch(() => {
+    statusBox.textContent = "复制失败，请手动复制浏览器地址栏。";
+    statusBox.style.background = "#fdecea";
+    statusBox.style.border = "1px solid #f5c2c7";
   });
 }
-loadModelViewer();
+
+viewer.addEventListener("load", () => {
+  const idx = Number(modelSelect.value);
+  const m = MODELS[idx];
+  statusBox.textContent = "模型已成功加载：" + (m ? m.name : "");
+  statusBox.style.background = "#e8f5e9";
+  statusBox.style.border = "1px solid #b7ddb9";
+});
+
+viewer.addEventListener("error", () => {
+  const idx = Number(modelSelect.value);
+  const m = MODELS[idx];
+  statusBox.innerHTML = "模型加载失败：<strong>" + (m ? m.file : "") + "</strong>。请确认该 GLB 文件已上传到 GitHub 仓库根目录。";
+  statusBox.style.background = "#fdecea";
+  statusBox.style.border = "1px solid #f5c2c7";
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  initSelect();
+  const url = new URL(window.location.href);
+  const modelIdx = url.searchParams.get("model");
+  if (modelIdx !== null && !isNaN(Number(modelIdx)) && MODELS[Number(modelIdx)]) {
+    modelSelect.value = Number(modelIdx);
+    loadSelectedModel();
+  }
+});
 </script>
 </body>
 </html>
